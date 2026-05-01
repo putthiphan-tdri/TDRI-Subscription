@@ -1,0 +1,17 @@
+TDRI Big Data Subscription App
+
+This is the main folder for your subscription management app:
+/Users/putthiphanhirunyatrakul/Documents/New project/subscription-app
+
+How to open the subscription app:
+1. Double-click "START HERE - TDRI Subscription.command".
+2. A Terminal window will open.
+3. Your browser will open the subscription app automatically.
+4. Keep the Terminal window open while using the subscription app.
+5. Close the Terminal window when finished.
+
+Important:
+- Do not open random localhost ports from old sessions.
+- Use this folder and this start file as your reliable access point.
+- If port 5177 is busy, the start file will automatically use the next available port.
+- This app is separate from the TDRI Portfolio App folder.
