@@ -1,0 +1,8 @@
+{
+  "name": "tdri-subscription-ledger",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/dashboard.test.js"
+  }
+}
