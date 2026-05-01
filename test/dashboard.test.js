@@ -70,6 +70,9 @@ test('subscription platform includes the expected core workflows', async () => {
   assert.doesNotMatch(script, /selectField\('type', 'Type', \['Monthly', 'Quarterly', 'Annually', 'Custom'\]/);
   assert.match(script, /shouldShowBlankCredentialNote/);
   assert.match(script, /credential-line/);
+  assert.match(script, /Email or username/);
+  assert.match(script, /Account email, username, or phone number/);
+  assert.doesNotMatch(script, /inputField\('credential', 'Email', .*'email'/);
   assert.match(script, /payment\.reimbursement === 'Project'/);
   assert.doesNotMatch(script, /<span>Reimbursement<\/span>\n        <span>\$\{renderSortButton\('lastPayment'/);
   assert.doesNotMatch(script, /renderSparkline/);

@@ -865,7 +865,7 @@ function renderSubscriptionModal(subscriptionId) {
           <div class="form-grid">
             ${inputField('product', 'Product Name', subscription.product, 'e.g. Notion, Figma, GitHub', 'text', '', false)}
             ${inputField('vendor', 'Vendor', subscription.vendor, 'Vendor name', 'text', '', false)}
-            ${inputField('credential', 'Email', subscription.credential, 'Account email', 'email', '', false)}
+            ${inputField('credential', 'Email or username', subscription.credential, 'Account email, username, or phone number', 'text', '', false)}
             ${inputField('password', 'Password', subscription.password, 'Account password', 'text', '', false)}
             ${textareaField('credentialNote', 'Note', subscription.credentialNote, 'Any credentials info, product details, license info')}
           </div>
