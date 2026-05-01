@@ -1,0 +1,112 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+
+const root = new URL('../', import.meta.url);
+
+test('dashboard shell loads the subscription app assets', async () => {
+  const html = await readFile(new URL('index.html', root), 'utf8');
+
+  assert.match(html, /TDRI Big Data Subscription Ledger/);
+  assert.match(html, /src\/main\.js/);
+  assert.match(html, /src\/styles\.css/);
+});
+
+test('subscription platform includes the expected core workflows', async () => {
+  const script = await readFile(new URL('src/main.js', root), 'utf8');
+
+  assert.match(script, /tdri-subscription-ledger-v1/);
+  assert.match(script, /Add Subscription/);
+  assert.match(script, /Team Members/);
+  assert.match(script, /Manage Team Members/);
+  assert.match(script, /Add Subscription/);
+  assert.doesNotMatch(script, /Add Subscription & Payment/);
+  assert.match(script, /textareaField/);
+  assert.match(script, /Reimbursement Type/);
+  assert.match(script, /const reimbursement = data\.reimbursement \|\| 'Fund'/);
+  assert.match(script, /const projectId = reimbursement === 'Project'/);
+  assert.match(script, /'Free'/);
+  assert.match(script, /const isFree = data\.paymentType === 'Free'/);
+  assert.doesNotMatch(script, /const reimbursement = isFree \? '' : data\.reimbursement \|\| 'Fund'/);
+  assert.doesNotMatch(script, /Monthly equivalent', subscription\.monthlyEquivalent/);
+  assert.doesNotMatch(script, /selectObjectField\('ownerId', 'Owner'/);
+  assert.match(script, /renderMemberRow/);
+  assert.match(script, /saveMemberEdit/);
+  assert.match(script, /deleteMember/);
+  assert.match(script, /avatarColors/);
+  assert.match(script, /#1aa8c5/);
+  assert.doesNotMatch(script, /member\.role \? `<small>/);
+  assert.match(script, /Projects/);
+  assert.match(script, /Payment History/);
+  assert.match(script, /open-edit-payment/);
+  assert.match(script, /save-payment-edit/);
+  assert.match(script, /Edit Payment/);
+  assert.match(script, /getSubscriptionMonthlyCost/);
+  assert.match(script, /getPaymentMonthlyAmount/);
+  assert.match(script, /payment\.type === 'Annually'/);
+  assert.match(script, /return amount \/ 12/);
+  assert.match(script, /payment\.type === 'One Time'/);
+  assert.match(script, /Recurring monthly estimate/);
+  assert.doesNotMatch(script, /1 - 31 May 2024/);
+  assert.match(script, /Recent Activity/);
+  assert.match(script, /renderTableSummary/);
+  assert.match(script, /renderSearchResults/);
+  assert.match(script, /searchRenderTimer/);
+  assert.match(script, /sort-table/);
+  assert.match(script, /sortSubscriptions/);
+  assert.match(script, /copy-password/);
+  assert.match(script, /toggle-password-visibility/);
+  assert.match(script, /visiblePasswords: new Set/);
+  assert.match(script, /displayedPassword/);
+  assert.match(script, /passwordCode\.textContent = displayedPassword/);
+  assert.doesNotMatch(script, /function togglePasswordVisibility[\s\S]*?renderSearchResults\(\);[\s\S]*?\n}/);
+  assert.match(script, /icon\(isPasswordVisible \? 'eyeOff' : 'eye'\)/);
+  assert.match(script, /maskPassword/);
+  assert.match(script, /selectObjectField\('paidBy', 'Paid by', state\.team, payment\?\.paidBy \|\| subscription\.ownerId, 'name'\)/);
+  assert.match(script, /edit-project/);
+  assert.match(script, /delete-project/);
+  assert.match(script, /save-project-edit/);
+  assert.match(script, /paymentTypeOptions = \['Monthly', 'Annually', 'One Time'\]/);
+  assert.doesNotMatch(script, /selectField\('type', 'Type', \['Monthly', 'Quarterly', 'Annually', 'Custom'\]/);
+  assert.match(script, /shouldShowBlankCredentialNote/);
+  assert.match(script, /credential-line/);
+  assert.match(script, /payment\.reimbursement === 'Project'/);
+  assert.doesNotMatch(script, /<span>Reimbursement<\/span>\n        <span>\$\{renderSortButton\('lastPayment'/);
+  assert.doesNotMatch(script, /renderSparkline/);
+  assert.doesNotMatch(script, /sparkline-/);
+  assert.doesNotMatch(script, /Application title/);
+  assert.doesNotMatch(script, /set-page/);
+  assert.doesNotMatch(script, /Primary navigation/);
+  assert.doesNotMatch(script, /Account controls/);
+  assert.doesNotMatch(script, /Quick Actions/);
+});
+
+test('TDRI visual system includes responsive dashboard structure', async () => {
+  const styles = await readFile(new URL('src/styles.css', root), 'utf8');
+
+  assert.match(styles, /--blue: #1667df/);
+  assert.match(styles, /\.app-shell/);
+  assert.match(styles, /\.subscription-panel/);
+  assert.match(styles, /\.status-progress/);
+  assert.match(styles, /\.sort-button/);
+  assert.match(styles, /\.password-code/);
+  assert.match(styles, /\.password-code\.is-revealed/);
+  assert.match(styles, /\.credential-line/);
+  assert.match(styles, /\.payment-card \.chip/);
+  assert.match(styles, /\.metric-icon::after/);
+  assert.match(styles, /\.team-modal/);
+  assert.match(styles, /\.team-add-row/);
+  assert.match(styles, /\.team-member-row/);
+  assert.match(styles, /\.subscription-modal/);
+  assert.match(styles, /\.modal-section/);
+  assert.match(styles, /select\[name="reimbursement"\] option\[value="Fund"\]:checked/);
+  assert.match(styles, /select\[name="paymentType"\] option\[value="Free"\]:checked/);
+  assert.match(styles, /\.reimbursement-section/);
+  assert.match(styles, /-webkit-appearance: none/);
+  assert.match(styles, /appearance: none/);
+  assert.doesNotMatch(styles, /\.sparkline/);
+  assert.match(styles, /max-height: 38\.6rem/);
+  assert.match(styles, /\.ledger-table/);
+  assert.doesNotMatch(styles, /\.app-identity/);
+  assert.match(styles, /@media \(max-width: 1200px\)/);
+});
