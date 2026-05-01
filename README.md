@@ -29,4 +29,13 @@ That file starts a local server from this exact folder and opens the subscriptio
 
 ## Deployment handoff
 
-For vibecode or another web-app platform, import this repository/folder as a static frontend app. After deployment, open the app and use **Import JSON** if you want to load a private ledger into that deployed instance.
+For vibecode or another web-app platform, import this repository/folder as a static frontend app. The visual design lives in `src/styles.css` and the app behavior lives in `src/main.js`; preserve those files exactly instead of regenerating the interface.
+
+Recommended platform commands:
+
+- Install: `npm install`
+- Develop: `npm run dev`
+- Build: `npm run build`
+- Preview: `npm run preview`
+
+After deployment, open the app and use **Import JSON** if you want to load a private ledger into that deployed instance.
