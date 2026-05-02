@@ -339,23 +339,25 @@ function render() {
 
           <div class="header-stack">
             <div class="header-actions" aria-label="Management actions">
-              <button class="button button-ghost" type="button" data-action="open-team">
-                ${icon('users')}
-                <span>Team Members</span>
-              </button>
-              <button class="button button-ghost" type="button" data-action="open-projects">
-                ${icon('folder')}
-                <span>Projects</span>
-              </button>
-              <button class="button button-ghost" type="button" data-action="export-data">
-                ${icon('download')}
-                <span>Export JSON</span>
-              </button>
-              <button class="button button-ghost" type="button" data-action="import-data">
-                ${icon('upload')}
-                <span>Import JSON</span>
-              </button>
-              <button class="button button-primary" type="button" data-action="open-add-subscription">
+              <div class="secondary-actions" aria-label="Secondary actions">
+                <button class="button button-ghost" type="button" data-action="open-team">
+                  ${icon('users')}
+                  <span>Team Members</span>
+                </button>
+                <button class="button button-ghost" type="button" data-action="open-projects">
+                  ${icon('folder')}
+                  <span>Projects</span>
+                </button>
+                <button class="button button-ghost" type="button" data-action="export-data">
+                  ${icon('download')}
+                  <span>Export JSON</span>
+                </button>
+                <button class="button button-ghost" type="button" data-action="import-data">
+                  ${icon('upload')}
+                  <span>Import JSON</span>
+                </button>
+              </div>
+              <button class="button button-primary header-primary-action" type="button" data-action="open-add-subscription">
                 ${icon('plus')}
                 <span>Add Subscription</span>
               </button>
@@ -599,9 +601,11 @@ function renderSubscription(subscription, index) {
         <div class="row-actions" data-label="Actions">
           <button class="inline-icon" type="button" aria-label="Edit subscription" title="Edit subscription" data-action="open-edit-subscription" data-id="${subscription.id}">
             ${icon('edit')}
+            <span class="action-label">Edit</span>
           </button>
           <button class="inline-icon danger" type="button" aria-label="Delete subscription" title="Delete subscription" data-action="delete-subscription" data-id="${subscription.id}">
             ${icon('trash')}
+            <span class="action-label">Delete</span>
           </button>
         </div>
       </div>

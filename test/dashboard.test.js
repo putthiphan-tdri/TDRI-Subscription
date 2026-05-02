@@ -73,6 +73,9 @@ test('subscription platform includes the expected core workflows', async () => {
   assert.match(script, /Email or username/);
   assert.match(script, /Account email, username, or phone number/);
   assert.doesNotMatch(script, /inputField\('credential', 'Email', .*'email'/);
+  assert.match(script, /secondary-actions/);
+  assert.match(script, /header-primary-action/);
+  assert.match(script, /action-label/);
   assert.match(script, /payment\.reimbursement === 'Project'/);
   assert.doesNotMatch(script, /<span>Reimbursement<\/span>\n        <span>\$\{renderSortButton\('lastPayment'/);
   assert.doesNotMatch(script, /renderSparkline/);
@@ -110,6 +113,9 @@ test('TDRI visual system includes responsive dashboard structure', async () => {
   assert.doesNotMatch(styles, /\.sparkline/);
   assert.match(styles, /max-height: 38\.6rem/);
   assert.match(styles, /\.ledger-table/);
+  assert.match(styles, /\.secondary-actions/);
+  assert.match(styles, /\.header-primary-action/);
+  assert.match(styles, /\.row-actions \.action-label/);
   assert.doesNotMatch(styles, /\.app-identity/);
   assert.match(styles, /@media \(max-width: 1200px\)/);
 });
