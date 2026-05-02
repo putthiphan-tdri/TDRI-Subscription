@@ -335,6 +335,9 @@ function render() {
               <span>TDRI</span>
               <small>Thailand<br />Development<br />Research<br />Institute</small>
             </a>
+            <button class="mobile-menu-button" type="button" aria-label="Open mobile menu">
+              ${icon('menu')}
+            </button>
           </div>
 
           <div class="header-stack">
@@ -395,6 +398,25 @@ function render() {
         </footer>
       </div>
 
+      <nav class="mobile-tabbar" aria-label="Mobile navigation">
+        <button class="is-active" type="button" aria-label="Dashboard">
+          ${icon('home')}
+          <span>Dashboard</span>
+        </button>
+        <button type="button" aria-label="Subscriptions">
+          ${icon('card')}
+          <span>Subscriptions</span>
+        </button>
+        <button type="button" aria-label="Projects" data-action="open-projects">
+          ${icon('folder')}
+          <span>Projects</span>
+        </button>
+        <button type="button" aria-label="Settings">
+          ${icon('settings')}
+          <span>Settings</span>
+        </button>
+      </nav>
+
       <div class="toast ${ui.toast ? 'is-visible' : ''}" role="status">${ui.toast}</div>
       ${renderModal()}
     </div>
@@ -403,6 +425,7 @@ function render() {
 
 function renderStats(totals) {
   return `
+    <h2 class="mobile-section-title">Overview</h2>
     <div class="metric-grid" aria-label="Summary metrics">
       <article class="metric-card">
         <span class="metric-icon metric-icon-blue">${icon('bookmark')}</span>
@@ -435,6 +458,9 @@ function renderToolbar() {
         ${icon('search')}
         <input type="search" value="${escapeAttribute(ui.query)}" placeholder="Search product, credential, or project" aria-label="Search subscriptions" data-action="search" />
       </div>
+      <button class="filter-button" type="button" aria-label="Filter subscriptions">
+        ${icon('filter')}
+      </button>
       <div class="segmented-control" aria-label="Filter subscriptions">
         ${filters
           .map(
@@ -1787,6 +1813,9 @@ function icon(name) {
     invoice: '<path d="M7 3h8l4 4v14H7z"/><path d="M15 3v5h5"/><path d="M10 12h6M10 16h6"/>',
     report: '<path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 16v-5M12 16V8M16 16v-7"/>',
     settings: '<circle cx="12" cy="12" r="3"/><path d="M19 12a7.8 7.8 0 0 0-.1-1l2-1.5-2-3.4-2.4 1a7 7 0 0 0-1.7-1L14.5 3h-5l-.3 3.1a7 7 0 0 0-1.7 1l-2.4-1-2 3.4 2 1.5a7.8 7.8 0 0 0 0 2l-2 1.5 2 3.4 2.4-1a7 7 0 0 0 1.7 1l.3 3.1h5l.3-3.1a7 7 0 0 0 1.7-1l2.4 1 2-3.4-2-1.5c.1-.3.1-.7.1-1z"/>',
+    menu: '<path d="M5 7h14M5 12h14M5 17h14"/>',
+    filter: '<path d="M4 5h16l-6.5 7.4V18l-3 1.5v-7.1z"/>',
+    home: '<path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
   };
 
   return `
