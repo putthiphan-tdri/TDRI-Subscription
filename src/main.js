@@ -64,19 +64,23 @@ function normalizeState(data) {
     ...data,
     team,
     projects,
-    subscriptions: subscriptions.map((subscription) => ({
-      ...subscription,
-      password: typeof subscription.password === 'string' ? subscription.password : '',
-      credentialNote: shouldShowBlankCredentialNote(subscription) ? '' : subscription.credentialNote,
-      reimbursement: subscription.reimbursement || '',
-      projectId: subscription.projectId || '',
-      payments: (subscription.payments || []).map((payment) => ({
-        ...payment,
-        reimbursement: payment.reimbursement || subscription.reimbursement || 'Fund',
-        projectId: payment.projectId || subscription.projectId || '',
-      })),
-      expanded: false,
-    })),
+    subscriptions: subscriptions.map((subscription) => {
+      const { vendor, ...subscriptionWithoutVendor } = subscription;
+
+      return {
+        ...subscriptionWithoutVendor,
+        password: typeof subscription.password === 'string' ? subscription.password : '',
+        credentialNote: shouldShowBlankCredentialNote(subscription) ? '' : subscription.credentialNote,
+        reimbursement: subscription.reimbursement || '',
+        projectId: subscription.projectId || '',
+        payments: (subscription.payments || []).map((payment) => ({
+          ...payment,
+          reimbursement: payment.reimbursement || subscription.reimbursement || 'Fund',
+          projectId: payment.projectId || subscription.projectId || '',
+        })),
+        expanded: false,
+      };
+    }),
   };
 }
 
@@ -234,7 +238,6 @@ function getFilteredSubscriptions() {
     const matchesFilter = ui.filter === 'All' || latest?.status === ui.filter;
     const searchHaystack = [
       subscription.product,
-      subscription.vendor,
       subscription.credential,
       latest?.reimbursement,
       latestProject?.code,
@@ -339,23 +342,25 @@ function render() {
 
           <div class="header-stack">
             <div class="header-actions" aria-label="Management actions">
-              <button class="button button-ghost" type="button" data-action="open-team">
-                ${icon('users')}
-                <span>Team Members</span>
-              </button>
-              <button class="button button-ghost" type="button" data-action="open-projects">
-                ${icon('folder')}
-                <span>Projects</span>
-              </button>
-              <button class="button button-ghost" type="button" data-action="export-data">
-                ${icon('download')}
-                <span>Export JSON</span>
-              </button>
-              <button class="button button-ghost" type="button" data-action="import-data">
-                ${icon('upload')}
-                <span>Import JSON</span>
-              </button>
-              <button class="button button-primary" type="button" data-action="open-add-subscription">
+              <div class="secondary-actions" aria-label="Secondary actions">
+                <button class="button button-ghost" type="button" data-action="open-team">
+                  ${icon('users')}
+                  <span>Team Members</span>
+                </button>
+                <button class="button button-ghost" type="button" data-action="open-projects">
+                  ${icon('folder')}
+                  <span>Projects</span>
+                </button>
+                <button class="button button-ghost" type="button" data-action="export-data">
+                  ${icon('download')}
+                  <span>Export JSON</span>
+                </button>
+                <button class="button button-ghost" type="button" data-action="import-data">
+                  ${icon('upload')}
+                  <span>Import JSON</span>
+                </button>
+              </div>
+              <button class="button button-primary header-primary-action" type="button" data-action="open-add-subscription">
                 ${icon('plus')}
                 <span>Add Subscription</span>
               </button>
@@ -401,6 +406,7 @@ function render() {
 
 function renderStats(totals) {
   return `
+    <h2 class="mobile-section-title">Overview</h2>
     <div class="metric-grid" aria-label="Summary metrics">
       <article class="metric-card">
         <span class="metric-icon metric-icon-blue">${icon('bookmark')}</span>
@@ -412,7 +418,7 @@ function renderStats(totals) {
         <span class="metric-icon metric-icon-violet">${icon('coin')}</span>
         <span class="metric-label">Monthly Cost</span>
         <strong>${formatMoney(totals.monthly, true)}</strong>
-        <small>Recurring monthly estimate</small>
+        <small>Recurring estimate</small>
       </article>
       <article class="metric-card">
         <span class="metric-icon metric-icon-green">${icon('trend')}</span>
@@ -433,6 +439,9 @@ function renderToolbar() {
         ${icon('search')}
         <input type="search" value="${escapeAttribute(ui.query)}" placeholder="Search product, credential, or project" aria-label="Search subscriptions" data-action="search" />
       </div>
+      <button class="filter-button" type="button" aria-label="Cycle subscription filter, current filter is ${escapeAttribute(ui.filter)}" title="Cycle filter" data-action="cycle-filter">
+        ${icon('filter')}
+      </button>
       <div class="segmented-control" aria-label="Filter subscriptions">
         ${filters
           .map(
@@ -452,13 +461,13 @@ function renderSkeleton() {
   return `
     <div class="ledger-table" aria-label="Loading subscriptions">
       <div class="ledger-head">
-        <span></span><span>Product</span><span>Credentials</span><span>Payment Type</span><span>Total Cost</span><span>Reimbursement</span><span>Last Payment</span><span>Actions</span>
+        <span></span><span>Product</span><span>Credentials</span><span>Payment Type</span><span>Total Cost</span><span>Last Payment</span><span>Actions</span>
       </div>
       ${Array.from({ length: 7 })
         .map(
           (_, index) => `
             <div class="skeleton-row" style="--index: ${index}">
-              <span></span><span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
             </div>
           `,
         )
@@ -530,12 +539,6 @@ function renderSubscription(subscription, index) {
   const total = getSubscriptionTotal(subscription);
   const isFree = subscription.paymentType === 'Free';
   const isPasswordVisible = ui.visiblePasswords.has(subscription.id);
-  const initials = subscription.product
-    .split(/\s+/)
-    .map((part) => part[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase();
 
   return `
     <article class="subscription-group ${subscription.expanded ? 'is-expanded' : ''}" style="--index: ${index}">
@@ -545,35 +548,35 @@ function renderSubscription(subscription, index) {
         </button>
 
         <div class="product-cell" data-label="Product">
-          <span class="product-badge">${initials}</span>
           <span>
             <strong>${escapeHtml(subscription.product)}</strong>
-            <small>${escapeHtml(subscription.vendor)}</small>
           </span>
         </div>
 
         <div class="credential-cell" data-label="Credentials">
-          <span class="credential-line">
-            <code>${escapeHtml(subscription.credential)}</code>
-            <button class="inline-icon" type="button" aria-label="Copy credential" title="Copy credential" data-action="copy-credential" data-value="${escapeAttribute(subscription.credential)}">
-              ${icon('copy')}
-            </button>
-          </span>
-          ${
-            subscription.password
-              ? `
-          <span class="credential-line">
-            <code class="password-code ${isPasswordVisible ? 'is-revealed' : ''}">${escapeHtml(displayedPassword(subscription))}</code>
-            <button class="inline-icon" type="button" aria-label="${isPasswordVisible ? 'Hide' : 'Show'} password" title="${isPasswordVisible ? 'Hide password' : 'Show password'}" data-action="toggle-password-visibility" data-id="${subscription.id}">
-              ${icon(isPasswordVisible ? 'eyeOff' : 'eye')}
-            </button>
-            <button class="inline-icon" type="button" aria-label="Copy password" title="Copy password" data-action="copy-password" data-value="${escapeAttribute(subscription.password)}">
-              ${icon('copy')}
-            </button>
-          </span>`
-              : ''
-          }
-          ${subscription.credentialNote ? `<small>${escapeHtml(subscription.credentialNote)}</small>` : ''}
+          <div class="credential-stack">
+            <span class="credential-line">
+              <code>${escapeHtml(subscription.credential)}</code>
+              <button class="inline-icon" type="button" aria-label="Copy credential" title="Copy credential" data-action="copy-credential" data-value="${escapeAttribute(subscription.credential)}">
+                ${icon('copy')}
+              </button>
+            </span>
+            ${
+              subscription.password
+                ? `
+            <span class="credential-line credential-line-password">
+              <code class="password-code ${isPasswordVisible ? 'is-revealed' : ''}">${escapeHtml(displayedPassword(subscription))}</code>
+              <button class="inline-icon" type="button" aria-label="${isPasswordVisible ? 'Hide' : 'Show'} password" title="${isPasswordVisible ? 'Hide password' : 'Show password'}" data-action="toggle-password-visibility" data-id="${subscription.id}">
+                ${icon(isPasswordVisible ? 'eyeOff' : 'eye')}
+              </button>
+              <button class="inline-icon" type="button" aria-label="Copy password" title="Copy password" data-action="copy-password" data-value="${escapeAttribute(subscription.password)}">
+                ${icon('copy')}
+              </button>
+            </span>`
+                : ''
+            }
+            ${subscription.credentialNote ? `<small>${escapeHtml(subscription.credentialNote)}</small>` : ''}
+          </div>
         </div>
 
         <div data-label="Payment Type">
@@ -592,16 +595,20 @@ function renderSubscription(subscription, index) {
         </div>
 
         <div class="date-cell" data-label="Last Payment">
-          <strong>${isFree ? '-' : latest ? formatDate(latest.date) : 'No payments'}</strong>
-          <small>${isFree ? 'None' : latest ? latest.status : 'Empty'}</small>
+          <span class="date-status-row">
+            <strong>${isFree ? '-' : latest ? formatDate(latest.date) : 'No payments'}</strong>
+            <small>${isFree ? 'None' : latest ? latest.status : 'Empty'}</small>
+          </span>
         </div>
 
         <div class="row-actions" data-label="Actions">
           <button class="inline-icon" type="button" aria-label="Edit subscription" title="Edit subscription" data-action="open-edit-subscription" data-id="${subscription.id}">
             ${icon('edit')}
+            <span class="action-label">Edit</span>
           </button>
           <button class="inline-icon danger" type="button" aria-label="Delete subscription" title="Delete subscription" data-action="delete-subscription" data-id="${subscription.id}">
             ${icon('trash')}
+            <span class="action-label">Delete</span>
           </button>
         </div>
       </div>
@@ -746,7 +753,7 @@ function renderReimbursementPanel() {
       <div class="status-line">
         <span class="status-icon fund">${icon('building')}</span>
         <span>
-          Fund
+          <strong>Fund</strong>
           <small>
             ${
               state.subscriptions
@@ -843,7 +850,6 @@ function renderSubscriptionModal(subscriptionId) {
     ? state.subscriptions.find((item) => item.id === subscriptionId)
     : {
         product: '',
-        vendor: '',
         credential: '',
         password: '',
         credentialNote: '',
@@ -864,8 +870,7 @@ function renderSubscriptionModal(subscriptionId) {
         <form class="subscription-form" data-action="${isEdit ? 'save-subscription-edit' : 'save-subscription'}" data-id="${subscriptionId || ''}">
           <div class="form-grid">
             ${inputField('product', 'Product Name', subscription.product, 'e.g. Notion, Figma, GitHub', 'text', '', false)}
-            ${inputField('vendor', 'Vendor', subscription.vendor, 'Vendor name', 'text', '', false)}
-            ${inputField('credential', 'Email', subscription.credential, 'Account email', 'email', '', false)}
+            ${inputField('credential', 'Email or username', subscription.credential, 'Account email, username, or phone number', 'text', '', false)}
             ${inputField('password', 'Password', subscription.password, 'Account password', 'text', '', false)}
             ${textareaField('credentialNote', 'Note', subscription.credentialNote, 'Any credentials info, product details, license info')}
           </div>
@@ -874,7 +879,7 @@ function renderSubscriptionModal(subscriptionId) {
             <h3>Subscription Type</h3>
             <div class="form-grid">
               ${selectField('status', 'Status', ['Active', 'Paused', 'Cancelled'], subscription.status || 'Active')}
-              ${selectField('paymentType', 'Type', ['Monthly', 'Quarterly', 'Annually', 'One Time', 'Custom', 'Free'], subscription.paymentType)}
+              ${selectField('paymentType', 'Type', ['Monthly', 'Annually', 'One Time', 'Free'], subscription.paymentType)}
             </div>
           </div>
 
@@ -1148,6 +1153,13 @@ document.addEventListener('click', async (event) => {
     render();
   }
 
+  if (action === 'cycle-filter') {
+    const filters = ['All', 'Pending', 'Done'];
+    const currentIndex = filters.indexOf(ui.filter);
+    ui.filter = filters[(currentIndex + 1) % filters.length];
+    render();
+  }
+
   if (action === 'sort-table') {
     const nextKey = control.dataset.sortKey;
     ui.sortDirection = ui.sortKey === nextKey && ui.sortDirection === 'asc' ? 'desc' : 'asc';
@@ -1385,18 +1397,20 @@ function saveSubscription(form, subscriptionId = '') {
   if (subscriptionId) {
     state.subscriptions = state.subscriptions.map((subscription) =>
       subscription.id === subscriptionId
-        ? {
-            ...subscription,
-            product: data.product.trim(),
-            vendor: data.vendor.trim(),
-            credential: data.credential.trim(),
-            password: data.password.trim(),
-            credentialNote: data.credentialNote.trim(),
-            status: data.status || 'Active',
-            paymentType: data.paymentType,
-            monthlyEquivalent: subscription.monthlyEquivalent || 0,
-            payments: isFree ? [] : subscription.payments,
-          }
+        ? (() => {
+            const { vendor, ...subscriptionWithoutVendor } = subscription;
+            return {
+              ...subscriptionWithoutVendor,
+              product: data.product.trim(),
+              credential: data.credential.trim(),
+              password: data.password.trim(),
+              credentialNote: data.credentialNote.trim(),
+              status: data.status || 'Active',
+              paymentType: data.paymentType,
+              monthlyEquivalent: subscription.monthlyEquivalent || 0,
+              payments: isFree ? [] : subscription.payments,
+            };
+          })()
         : subscription,
     );
     showToast('Subscription updated');
@@ -1405,7 +1419,6 @@ function saveSubscription(form, subscriptionId = '') {
     state.subscriptions.unshift({
       id,
       product: data.product.trim(),
-      vendor: data.vendor.trim(),
       credential: data.credential.trim(),
       password: data.password.trim(),
       credentialNote: data.credentialNote.trim(),
@@ -1783,6 +1796,9 @@ function icon(name) {
     invoice: '<path d="M7 3h8l4 4v14H7z"/><path d="M15 3v5h5"/><path d="M10 12h6M10 16h6"/>',
     report: '<path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 16v-5M12 16V8M16 16v-7"/>',
     settings: '<circle cx="12" cy="12" r="3"/><path d="M19 12a7.8 7.8 0 0 0-.1-1l2-1.5-2-3.4-2.4 1a7 7 0 0 0-1.7-1L14.5 3h-5l-.3 3.1a7 7 0 0 0-1.7 1l-2.4-1-2 3.4 2 1.5a7.8 7.8 0 0 0 0 2l-2 1.5 2 3.4 2.4-1a7 7 0 0 0 1.7 1l.3 3.1h5l.3-3.1a7 7 0 0 0 1.7-1l2.4 1 2-3.4-2-1.5c.1-.3.1-.7.1-1z"/>',
+    menu: '<path d="M5 7h14M5 12h14M5 17h14"/>',
+    filter: '<path d="M4 5h16l-6.5 7.4V18l-3 1.5v-7.1z"/>',
+    home: '<path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
   };
 
   return `

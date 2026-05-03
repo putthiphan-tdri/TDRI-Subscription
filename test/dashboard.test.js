@@ -46,7 +46,8 @@ test('subscription platform includes the expected core workflows', async () => {
   assert.match(script, /payment\.type === 'Annually'/);
   assert.match(script, /return amount \/ 12/);
   assert.match(script, /payment\.type === 'One Time'/);
-  assert.match(script, /Recurring monthly estimate/);
+  assert.match(script, /Recurring estimate/);
+  assert.doesNotMatch(script, /Recurring monthly estimate/);
   assert.doesNotMatch(script, /1 - 31 May 2024/);
   assert.match(script, /Recent Activity/);
   assert.match(script, /renderTableSummary/);
@@ -70,6 +71,22 @@ test('subscription platform includes the expected core workflows', async () => {
   assert.doesNotMatch(script, /selectField\('type', 'Type', \['Monthly', 'Quarterly', 'Annually', 'Custom'\]/);
   assert.match(script, /shouldShowBlankCredentialNote/);
   assert.match(script, /credential-line/);
+  assert.match(script, /credential-line-password/);
+  assert.match(script, /credential-stack/);
+  assert.match(script, /cycle-filter/);
+  assert.match(script, /Email or username/);
+  assert.match(script, /Account email, username, or phone number/);
+  assert.doesNotMatch(script, /inputField\('credential', 'Email', .*'email'/);
+  assert.doesNotMatch(script, /inputField\('vendor'/);
+  assert.doesNotMatch(script, /'Vendor'/);
+  assert.doesNotMatch(script, /subscription\.vendor/);
+  assert.match(script, /secondary-actions/);
+  assert.match(script, /header-primary-action/);
+  assert.match(script, /action-label/);
+  assert.doesNotMatch(script, /mobile-menu-button/);
+  assert.doesNotMatch(script, /mobile-tabbar/);
+  assert.match(script, /mobile-section-title/);
+  assert.match(script, /filter-button/);
   assert.match(script, /payment\.reimbursement === 'Project'/);
   assert.doesNotMatch(script, /<span>Reimbursement<\/span>\n        <span>\$\{renderSortButton\('lastPayment'/);
   assert.doesNotMatch(script, /renderSparkline/);
@@ -79,6 +96,7 @@ test('subscription platform includes the expected core workflows', async () => {
   assert.doesNotMatch(script, /Primary navigation/);
   assert.doesNotMatch(script, /Account controls/);
   assert.doesNotMatch(script, /Quick Actions/);
+  assert.doesNotMatch(script, /product-badge/);
 });
 
 test('TDRI visual system includes responsive dashboard structure', async () => {
@@ -92,6 +110,7 @@ test('TDRI visual system includes responsive dashboard structure', async () => {
   assert.match(styles, /\.password-code/);
   assert.match(styles, /\.password-code\.is-revealed/);
   assert.match(styles, /\.credential-line/);
+  assert.match(styles, /\.credential-stack/);
   assert.match(styles, /\.payment-card \.chip/);
   assert.match(styles, /\.metric-icon::after/);
   assert.match(styles, /\.team-modal/);
@@ -107,6 +126,13 @@ test('TDRI visual system includes responsive dashboard structure', async () => {
   assert.doesNotMatch(styles, /\.sparkline/);
   assert.match(styles, /max-height: 38\.6rem/);
   assert.match(styles, /\.ledger-table/);
+  assert.match(styles, /\.secondary-actions/);
+  assert.match(styles, /\.header-primary-action/);
+  assert.match(styles, /\.row-actions \.action-label/);
+  assert.doesNotMatch(styles, /\.mobile-tabbar/);
+  assert.match(styles, /\.mobile-section-title/);
+  assert.match(styles, /\.filter-button/);
   assert.doesNotMatch(styles, /\.app-identity/);
+  assert.doesNotMatch(styles, /\.product-badge/);
   assert.match(styles, /@media \(max-width: 1200px\)/);
 });
