@@ -296,7 +296,8 @@ a {
 }
 
 .mobile-section-title,
-.filter-button {
+.filter-button,
+.app-tagline {
   display: none;
 }
 
@@ -1701,13 +1702,22 @@ a {
   }
 
   .tdri-lockup span {
-    font-size: clamp(2.95rem, 16vw, 3.85rem);
+    font-size: clamp(2.2rem, 11vw, 2.8rem);
     letter-spacing: 0;
   }
 
   .tdri-lockup small {
-    font-size: clamp(0.58rem, 2.9vw, 0.74rem);
+    font-size: clamp(0.52rem, 2.4vw, 0.68rem);
     line-height: 0.96;
+  }
+
+  .app-tagline {
+    display: block;
+    margin: 0.25rem 0 0;
+    color: #5271a0;
+    font-size: 0.82rem;
+    font-weight: 760;
+    letter-spacing: 0.01em;
   }
 
   .header-actions {
@@ -1766,11 +1776,18 @@ a {
   .secondary-actions .button svg {
     width: 1.05rem;
     height: 1.05rem;
-    padding: 0.58rem;
+    padding: 0.44rem;
     box-sizing: content-box;
     color: var(--ink);
     background: #f2f6fc;
     border-radius: 0.58rem;
+  }
+
+  .secondary-actions .button span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.72rem;
   }
 
   .secondary-actions .button::after {
@@ -1791,10 +1808,10 @@ a {
   }
 
   .metric-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0;
     overflow: hidden;
-    padding: 0.3rem 0.92rem;
+    padding: 0;
     background: rgba(255, 255, 255, 0.88);
     border: 1px solid var(--line);
     border-radius: 0.78rem;
@@ -1803,17 +1820,19 @@ a {
 
   .metric-card {
     display: grid;
-    grid-template-columns: 2.42rem minmax(0, 1fr);
+    grid-template-columns: 1fr;
     grid-template-areas:
-      "icon label"
-      "icon value"
-      "icon note";
+      "icon"
+      "value"
+      "label";
+    justify-items: center;
+    text-align: center;
     align-content: center;
     align-items: center;
-    column-gap: 0.9rem;
-    row-gap: 0.3rem;
+    column-gap: 0;
+    row-gap: 0.18rem;
     min-height: 0;
-    padding: 1.12rem 0;
+    padding: 0.82rem 0.35rem;
     background: transparent;
     border: 0;
     border-radius: 0;
@@ -1821,39 +1840,39 @@ a {
   }
 
   .metric-card + .metric-card {
-    border-top: 1px solid #e4edf9;
+    border-top: 0;
+    border-left: 1px solid #e4edf9;
   }
 
   .metric-icon {
     grid-area: icon;
-    width: 2.42rem;
-    height: 2.42rem;
-    border-radius: 0.52rem;
+    width: 2rem;
+    height: 2rem;
+    margin-bottom: 0.28rem;
+    border-radius: 0.46rem;
   }
 
   .metric-icon svg {
-    width: 1.04rem;
-    height: 1.04rem;
+    width: 1rem;
+    height: 1rem;
   }
 
   .metric-label {
     grid-area: label;
     min-height: 0;
-    font-size: 0.76rem;
+    font-size: 0.63rem;
     line-height: 1.2;
   }
 
   .metric-card strong {
     grid-area: value;
-    font-size: clamp(1.08rem, 5.2vw, 1.36rem);
+    font-size: clamp(0.92rem, 4.5vw, 1.1rem);
     letter-spacing: 0;
     line-height: 1.12;
   }
 
   .metric-card small {
-    grid-area: note;
-    font-size: 0.74rem;
-    line-height: 1.2;
+    display: none;
   }
 
   .subscription-panel {
@@ -1948,17 +1967,17 @@ a {
     grid-area: product;
     display: block;
     min-width: 0;
+    overflow: hidden;
     padding-right: 0;
   }
 
   .product-cell strong {
-    overflow: visible;
-    text-overflow: clip;
+    display: block;
+    width: 100%;
+    overflow-wrap: anywhere;
     white-space: normal;
-    overflow-wrap: normal;
-    word-break: normal;
-    font-size: 1.02rem;
-    line-height: 1.14;
+    font-size: 0.96rem;
+    line-height: 1.2;
   }
 
   .subscription-row > div[data-label="Payment Type"] {
@@ -1995,7 +2014,7 @@ a {
   .money-stack,
   .date-cell {
     display: grid;
-    grid-template-columns: 6.7rem minmax(0, 1fr);
+    grid-template-columns: 5.8rem minmax(0, 1fr);
     align-self: start;
     align-items: start;
     gap: 0.55rem;
@@ -2021,7 +2040,7 @@ a {
   }
 
   .date-cell {
-    grid-template-columns: 6.7rem minmax(0, 1fr);
+    grid-template-columns: 5.8rem minmax(0, 1fr);
     border-top: 0;
     border-radius: 0 0 0.58rem 0.58rem;
   }
@@ -2060,8 +2079,14 @@ a {
   }
 
   .subscription-row > *[data-label] {
-    grid-template-columns: 6.7rem minmax(0, 1fr);
+    grid-template-columns: 5.8rem minmax(0, 1fr);
     gap: 0.55rem;
+  }
+
+  .subscription-row > .product-cell[data-label] {
+    display: block;
+    grid-template-columns: 1fr;
+    gap: 0;
   }
 
   .subscription-row > div[data-label="Payment Type"]::before,
@@ -2150,8 +2175,9 @@ a {
   .date-status-row {
     grid-column: 2;
     display: flex;
-    align-items: center;
-    gap: 0.58rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.28rem;
     min-width: 0;
   }
 

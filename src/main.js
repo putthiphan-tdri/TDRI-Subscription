@@ -338,6 +338,7 @@ function render() {
               <span>TDRI</span>
               <small>Thailand<br />Development<br />Research<br />Institute</small>
             </a>
+            <p class="app-tagline">Subscription Ledger</p>
           </div>
 
           <div class="header-stack">
@@ -345,7 +346,7 @@ function render() {
               <div class="secondary-actions" aria-label="Secondary actions">
                 <button class="button button-ghost" type="button" data-action="open-team">
                   ${icon('users')}
-                  <span>Team Members</span>
+                  <span>Members</span>
                 </button>
                 <button class="button button-ghost" type="button" data-action="open-projects">
                   ${icon('folder')}
@@ -437,7 +438,7 @@ function renderToolbar() {
     <div class="table-toolbar">
       <div class="search-box">
         ${icon('search')}
-        <input type="search" value="${escapeAttribute(ui.query)}" placeholder="Search product, credential, or project" aria-label="Search subscriptions" data-action="search" />
+        <input type="search" value="${escapeAttribute(ui.query)}" placeholder="Search subscriptions…" aria-label="Search subscriptions" data-action="search" />
       </div>
       <button class="filter-button" type="button" aria-label="Cycle subscription filter, current filter is ${escapeAttribute(ui.filter)}" title="Cycle filter" data-action="cycle-filter">
         ${icon('filter')}
@@ -548,9 +549,7 @@ function renderSubscription(subscription, index) {
         </button>
 
         <div class="product-cell" data-label="Product">
-          <span>
-            <strong>${escapeHtml(subscription.product)}</strong>
-          </span>
+          <strong>${escapeHtml(subscription.product)}</strong>
         </div>
 
         <div class="credential-cell" data-label="Credentials">
