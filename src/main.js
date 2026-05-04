@@ -37,10 +37,29 @@ let ui = {
 };
 let searchRenderTimer = 0;
 
-setTimeout(() => {
+setTimeout(async () => {
+  await syncFromApi();
   ui.loading = false;
   render();
 }, 260);
+
+async function syncFromApi() {
+  if (
+    window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1'
+  )
+    return;
+  try {
+    const res = await fetch('/api/ledger', { cache: 'no-store' });
+    if (!res.ok) return; // No blob yet — use localStorage data
+    const apiData = await res.json();
+    if (!apiData) return;
+    state = normalizeState(apiData);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch {
+    // Network error — fall back to localStorage data
+  }
+}
 
 function loadState() {
   try {
@@ -90,6 +109,17 @@ function shouldShowBlankCredentialNote(subscription) {
 
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  // Sync to backend when deployed (not on localhost)
+  if (
+    window.location.hostname !== 'localhost' &&
+    window.location.hostname !== '127.0.0.1'
+  ) {
+    fetch('/api/ledger', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(state),
+    }).catch(() => {});
+  }
 }
 
 function exportLedgerData() {

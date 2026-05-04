@@ -8,6 +8,9 @@
     "preview": "vite preview --host 0.0.0.0",
     "test": "node --test test/dashboard.test.js"
   },
+  "dependencies": {
+    "@vercel/blob": "^2.3.3"
+  },
   "devDependencies": {
     "vite": "^5.4.0"
   }
